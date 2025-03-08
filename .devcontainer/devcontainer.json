@@ -1,0 +1,21 @@
+{
+	"name": "server:maven-java+postgres",
+	"dockerComposeFile": "docker-compose.yml",
+	"workspaceFolder": "/web-reactive",
+	"service": "server",
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"dotjoshjohnson.xml",
+				"vscjava.vscode-maven",
+				"vscjava.vscode-java-pack",
+				"redhat.fabric8-analytics",
+				"mhutchie.git-graph",
+				"ms-azuretools.vscode-docker",
+				"postman.postman-for-vscode",
+				"aaron-bond.better-comments"
+			]
+		}
+	},
+	"forwardPorts": [8080]
+}

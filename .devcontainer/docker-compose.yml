@@ -1,0 +1,26 @@
+version: "3.8"
+
+services:
+  db:
+    image: postgres:latest
+    ports:
+      - 5434:5432
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    networks:
+      - server-network
+  server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: tail -f /dev/null
+    networks:
+      - server-network
+    ports:
+      - 8080:8080
+    volumes:
+      - ..:/web-reactive
+networks:
+  server-network:
