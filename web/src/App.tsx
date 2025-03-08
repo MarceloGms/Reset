@@ -1,9 +1,20 @@
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import Auth from "./routes/Auth";
+import Home from "./routes/Home";
+
 function App() {
-  return (
-    <div className="bg-zinc-600 flex-1 min-h-screen">
-      <h1 className="text-zinc-200">olas</h1>
-    </div>
-  );
+  const router = createBrowserRouter([
+    {
+      path: "/auth",
+      element: <Auth />,
+    },
+    {
+      path: "/",
+      element: <Home />,
+    },
+  ]);
+
+  return <RouterProvider router={router} />;
 }
 
 export default App;
