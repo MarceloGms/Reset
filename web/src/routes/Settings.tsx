@@ -11,6 +11,7 @@ import {
   Collapse,
 } from "@mui/material";
 import Navbar from "../components/navbar";
+import CustomSnackbar from '../components/CustomSnackBar';
 
 const Settings: React.FC = () => {
   // Dados pessoais
@@ -24,25 +25,51 @@ const Settings: React.FC = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
 
   // Mensagem de feedback
-  const [message, setMessage] = useState("");
+  const [message] = useState("");
 
   // Controle do collapse para senha
   const [isPasswordSectionOpen, setIsPasswordSectionOpen] = useState(false);
 
+  // Estado para controlar o CustomSnackbar
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "success" as "success" | "error" | "info" | "warning",
+  });
+
+  const handleCloseSnackbar = () => {
+    setSnackbar(prev => ({ ...prev, open: false }));
+  };
+
   // Função para atualizar dados pessoais
   const handleNameAndRoleUpdate = () => {
     // Aqui você pode fazer a chamada à API para atualizar os dados pessoais
-    setMessage("Dados atualizados com sucesso!");
+   
+    setSnackbar({
+      open: true,
+      message: "Dados atualizados com sucesso!",
+      severity: "success",
+    });
   };
 
   // Função para atualizar senha
   const handlePasswordUpdate = () => {
     if (newPassword !== confirmPassword) {
-      setMessage("As senhas não conferem.");
+     
+      setSnackbar({
+        open: true,
+        message: "As senhas não conferem.",
+        severity: "error",
+      });
       return;
     }
     // Aqui você faria a chamada à API para atualizar a senha
-    setMessage("Senha atualizada com sucesso!");
+   
+    setSnackbar({
+      open: true,
+      message: "Senha atualizada com sucesso!",
+      severity: "success",
+    });
     // Limpa os campos e fecha a seção de senha
     setOldPassword("");
     setNewPassword("");
@@ -57,11 +84,6 @@ const Settings: React.FC = () => {
 
       {/* Conteúdo principal com padding para compensar a Navbar */}
       <main className="p-5 mt-16">
-        {/* <header className="mt-5 mb-5">
-          <Typography variant="h3" component="h1" className="font-bold">
-            Definições
-          </Typography>
-        </header> */}
         <header className="mt-8 mb-16">
           <h1 className="text-3xl font-bold">Definições</h1>
         </header>
@@ -82,23 +104,23 @@ const Settings: React.FC = () => {
             <FormControl variant="outlined" fullWidth>
               <InputLabel>Função</InputLabel>
               <Select
-            label="Função"
-            value={role}
-            onChange={(e) => setRole(e.target.value as string)}
+                label="Função"
+                value={role}
+                onChange={(e) => setRole(e.target.value as string)}
               >
-            <MenuItem value="Logística">Logística</MenuItem>
-            <MenuItem value="Técnico">Técnico</MenuItem>
+                <MenuItem value="Logística">Logística</MenuItem>
+                <MenuItem value="Técnico">Técnico</MenuItem>
               </Select>
             </FormControl>
             <FormControl variant="outlined" fullWidth>
               <InputLabel>Bancada</InputLabel>
               <Select
-            label="Bancada"
-            value={bench}
-            onChange={(e) => setBench(e.target.value as string)}
+                label="Bancada"
+                value={bench}
+                onChange={(e) => setBench(e.target.value as string)}
               >
-            <MenuItem value="WSB100">WSB100</MenuItem>
-            <MenuItem value="WSB200">WSB200</MenuItem>
+                <MenuItem value="WSB100">WSB100</MenuItem>
+                <MenuItem value="WSB200">WSB200</MenuItem>
               </Select>
             </FormControl>
           </Box>
@@ -179,6 +201,12 @@ const Settings: React.FC = () => {
           </Typography>
         )}
       </main>
+      <CustomSnackbar
+        open={snackbar.open}
+        message={snackbar.message}
+        severity={snackbar.severity}
+        onClose={handleCloseSnackbar}
+      />
     </div>
   );
 };

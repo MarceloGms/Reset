@@ -12,6 +12,7 @@ import {
 import { DataGrid, GridColDef, GridRenderCellParams } from "@mui/x-data-grid";
 import Navbar from "../components/navbar"; // Ajuste o caminho de acordo com teu projeto
 import AddEditLocationModal from "../components/AddEditLocation";
+import CustomSnackbar from '../components/CustomSnackBar';
 
 // Definição da interface para localizações
 export interface Location {
@@ -39,6 +40,17 @@ const ManageLocations: React.FC = () => {
   const [openModal, setOpenModal] = useState(false);
   const [editingLocation, setEditingLocation] = useState<Location | null>(null);
 
+  // Estado para controlar o CustomSnackbar
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "success" as "success" | "error" | "info" | "warning",
+  });
+
+  const handleCloseSnackbar = () => {
+    setSnackbar(prev => ({ ...prev, open: false }));
+  };
+
   // Filtra os dados conforme o termo de pesquisa e o filtro de tipo
   const filteredData = useMemo(() => {
     return locations.filter((loc) =>
@@ -65,6 +77,11 @@ const ManageLocations: React.FC = () => {
   const handleDelete = (id: string) => {
     if (window.confirm("Tem certeza que deseja remover esta localização?")) {
       setLocations((prev) => prev.filter((loc) => loc.id !== id));
+      setSnackbar({
+        open: true,
+        message: "Localização removida com sucesso!",
+        severity: "success",
+      });
     }
   };
 
@@ -117,16 +134,18 @@ const ManageLocations: React.FC = () => {
   return (
     <div>
       <Navbar />
-      <Box sx={{ p: 5 }}>
-        <h1 className="text-3xl font-bold mb-5">Gestão de Localizações</h1>
+      <main className="p-5 mt-16">
+        <header className="mt-5 mb-5">
+          <h1 className="text-3xl font-bold">Gestão de Localizações</h1>
+        </header>
 
         {/* Botão para adicionar localização */}
-        <Button variant="contained" onClick={handleOpenAdd} sx={{ mb: 3, textTransform: "none" }}>
+        <Button variant="contained" onClick={handleOpenAdd} sx={{ mb: 5, textTransform: "none" }}>
           ➕ Adicionar Localização
         </Button>
 
-        {/* Campos de pesquisa e filtro */}
-        <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
+        {/* Pesquisa e filtro */}
+        <section className="flex gap-5 mb-5">
           <TextField
             label="Pesquisar Localização"
             variant="outlined"
@@ -148,19 +167,21 @@ const ManageLocations: React.FC = () => {
               <MenuItem value="Bancada">Bancada</MenuItem>
             </Select>
           </FormControl>
-        </Box>
+        </section>
 
         {/* Tabela de localizações */}
-        <Paper sx={{ width: "100%", mt: 2 }}>
-          <DataGrid
-            rows={filteredData}
-            columns={columns}
-            autoHeight
-            disableRowSelectionOnClick
-            pageSizeOptions={[5, 10, 20]}
-            getRowId={(row) => row.id} // Usa o campo "id" como identificador único
-          />
-        </Paper>
+        <Box sx={{ width: "100%" }}>
+          <Paper sx={{ width: "100%", mt: 2 }}>
+            <DataGrid
+              rows={filteredData}
+              columns={columns}
+              autoHeight
+              disableRowSelectionOnClick
+              pageSizeOptions={[5, 10, 20]}
+              getRowId={(row) => row.id} // Usa o campo "id" como identificador único
+            />
+          </Paper>
+        </Box>
 
         {/* Modal de Adicionar/Editar Localização */}
         <AddEditLocationModal
@@ -169,7 +190,13 @@ const ManageLocations: React.FC = () => {
           location={editingLocation}
           saveLocation={saveLocation}
         />
-      </Box>
+      </main>
+      <CustomSnackbar
+        open={snackbar.open}
+        message={snackbar.message}
+        severity={snackbar.severity}
+        onClose={handleCloseSnackbar}
+      />
     </div>
   );
 };

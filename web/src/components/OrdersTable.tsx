@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import { DataGrid, GridColDef, GridRenderCellParams } from "@mui/x-data-grid";
 import { Box, Button } from "@mui/material";
 import { Order } from "../routes/DashboardLogistica";
+import CustomSnackbar from './CustomSnackBar';
 
 interface OrdersTableProps {
   orders: Order[];
@@ -10,6 +11,17 @@ interface OrdersTableProps {
 }
 
 const OrdersTable: React.FC<OrdersTableProps> = ({ orders, onEdit, onViewHistory }) => {
+  // Estado para controlar o CustomSnackbar
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "success" as "success" | "error" | "info" | "warning",
+  });
+
+  const handleCloseSnackbar = () => {
+    setSnackbar(prev => ({ ...prev, open: false }));
+  };
+
   const columns: GridColDef[] = [
     { field: "requestId", headerName: "Request ID", flex: 1, resizable: false },
     { field: "orderNumber", headerName: "Pedido", flex: 1, resizable: false },
@@ -41,14 +53,16 @@ const OrdersTable: React.FC<OrdersTableProps> = ({ orders, onEdit, onViewHistory
       resizable: false,
       renderCell: (params: GridRenderCellParams) => (
         <div style={{ display: "flex", gap: 8 }}>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={() => onEdit(params.row as Order)}
-            style={{ textTransform: "none" }}
-          >
-            ✏️ Atualizar 
-          </Button>
+          {params.row.status !== "Recolhido" && (
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => onEdit(params.row as Order)}
+              style={{ textTransform: "none" }}
+            >
+              ✏️ Atualizar
+            </Button>
+          )}
           <Button
             variant="contained"
             color="secondary"
@@ -70,6 +84,12 @@ const OrdersTable: React.FC<OrdersTableProps> = ({ orders, onEdit, onViewHistory
         autoHeight
         pageSizeOptions={[5, 10, 20]}
         disableRowSelectionOnClick
+      />
+      <CustomSnackbar
+        open={snackbar.open}
+        message={snackbar.message}
+        severity={snackbar.severity}
+        onClose={handleCloseSnackbar}
       />
     </Box>
   );

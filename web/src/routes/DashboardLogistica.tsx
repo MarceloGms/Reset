@@ -4,7 +4,8 @@ import Navbar from "../components/navbar";
 import OrdersTable from "../components/OrdersTable";
 import UpdateOrderModal from "../components/updateOrderModal";
 import OrderHistoryModal from "../components/orderHistoryModal";
-import AddOrderModal from "../components/addOrder";
+import AddOrderModal from "../components/addOrderLogistica";
+import CustomSnackbar from '../components/CustomSnackBar';
 
 // Define as interfaces para Order e HistoryRecord
 export interface Order {
@@ -30,7 +31,7 @@ export interface HistoryRecord {
 }
 
 // Estados possíveis
-const statuses = ["Em Picking", "Stock Out", "Pronto para Recolha"];
+const statuses = ["Em Picking", "Stock Out", "Pronto para Recolha", "Recolhido"];
 
 // Mapeamento de localizações por tipo de reparação
 const locationMapping: { [key: string]: string } = {
@@ -49,7 +50,7 @@ const staticOrders: Order[] = [
     orderNumber: "50179738",
     parts: "Peça X, Peça Y",
     location: "Picking",
-    status: "Em Picking",
+    status: "Recolhido",
     repairType: "Major",
     updatedAt: new Date("2025-03-08T10:30:00"),
   },
@@ -82,6 +83,17 @@ const DashboardLogistica: React.FC = () => {
   // Estado para controlar o AddOrderModal
   const [openAddOrderModal, setOpenAddOrderModal] = useState(false);
 
+  // Estado para controlar o CustomSnackbar
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "success" as "success" | "error" | "info" | "warning",
+  });
+
+  const handleCloseSnackbar = () => {
+    setSnackbar(prev => ({ ...prev, open: false }));
+  };
+
   // Filtra os pedidos com base na pesquisa e no filtro de status
   const filteredData = useMemo(() => {
     return orders.filter((order) =>
@@ -96,6 +108,14 @@ const DashboardLogistica: React.FC = () => {
 
   // Abre o modal de atualização e define os valores iniciais
   const handleEdit = (order: Order) => {
+    if (order.status === "Recolhido") {
+      setSnackbar({
+        open: true,
+        message: "Pedidos no estado 'Recolhido' não podem ser editados.",
+        severity: "error",
+      });
+      return;
+    }
     setSelectedOrder(order);
     setNewStatus(order.status);
     setNewLocation(order.location);
@@ -221,6 +241,12 @@ const DashboardLogistica: React.FC = () => {
           addOrder={addNewOrder}
         />
       </main>
+      <CustomSnackbar
+        open={snackbar.open}
+        message={snackbar.message}
+        severity={snackbar.severity}
+        onClose={handleCloseSnackbar}
+      />
     </div>
   );
 };

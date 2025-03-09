@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import { Box, Button, TextField } from '@mui/material';
+import CustomSnackbar from './CustomSnackBar';
 
 interface Order {
   id: number;
@@ -47,6 +48,17 @@ const OrdersTable: React.FC = () => {
     );
   }, [searchTerm, data]);
 
+  // Estado para controlar o CustomSnackbar
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "success" as "success" | "error" | "info" | "warning",
+  });
+
+  const handleCloseSnackbar = () => {
+    setSnackbar(prev => ({ ...prev, open: false }));
+  };
+
   const columns: GridColDef[] = [
     { field: 'requestId', headerName: 'Request ID', flex: 1, resizable: false },
     { field: 'orderNumber', headerName: 'Pedido', flex: 1, resizable: false },
@@ -60,21 +72,31 @@ const OrdersTable: React.FC = () => {
       resizable: false,
       renderCell: (params: GridRenderCellParams) => {
         const { status, orderNumber } = params.row as Order;
+
         if (status === 'Pronto para Recolha') {
-            return (
-                <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={() => alert(`Pedido ${orderNumber} confirmado!`)}
-                    sx={{ textTransform: 'none', fontSize: '0.875rem' }}
-                >
-                    Confirmar Recolha
-                </Button>
-            );
+          return (
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => setSnackbar({
+                open: true,
+                message: `Pedido ${orderNumber} confirmado!`,
+                severity: "success",
+              })}
+              sx={{ textTransform: 'none', fontSize: '0.875rem' }}
+            >
+              Confirmar Recolha
+            </Button>
+          );
         }
 
         return (
-          <Button variant="contained" color="secondary" disabled sx={{ textTransform: 'none', fontSize: '0.875rem' }}>
+          <Button
+            variant="contained"
+            color="secondary"
+            disabled
+            sx={{ textTransform: 'none', fontSize: '0.875rem' }}
+          >
             Aguardar
           </Button>
         );
@@ -107,6 +129,13 @@ const OrdersTable: React.FC = () => {
         pageSizeOptions={[5, 10, 20]}
         disableRowSelectionOnClick
         checkboxSelection={false}
+      />
+
+      <CustomSnackbar
+        open={snackbar.open}
+        message={snackbar.message}
+        severity={snackbar.severity}
+        onClose={handleCloseSnackbar}
       />
     </Box>
   );
