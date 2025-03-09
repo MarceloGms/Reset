@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "console-ninja node --env-file .env --watch src/app.js"
+    "dev": "nodemon --require dotenv/config src/app.js"
   },
   "keywords": [],
   "author": "",
@@ -19,6 +19,7 @@
     "bcrypt": "^5.1.1",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
     "express": "^4.19.2",
     "fastify": "^5.2.1",
     "fastify-type-provider-zod": "^4.0.2",
