@@ -1,0 +1,123 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model Localizacao {
+  id               Int           @id @default(autoincrement())
+  nome             String
+  tipo             String
+  Departamento     Departamento?
+  Pedido           Pedido[]
+  MovimentoOrigem  Movimento[]   @relation("OrigemRelacao")
+  MovimentoDestino Movimento[]   @relation("DestinoRelacao")
+
+  @@unique([nome, tipo])
+}
+
+model Departamento {
+  id             Int          @id @default(autoincrement())
+  nome           String
+  pickingPointId Int?         @unique
+  pickingPoint   Localizacao? @relation(fields: [pickingPointId], references: [id])
+  TipoReparo     TipoReparo[]
+  Bancada        Bancada[]
+}
+
+model Utilizador {
+  id                Int                 @id @default(autoincrement())
+  username          String              @unique
+  password          String
+  tipo              String
+  BancadaUtilizador BancadaUtilizador[]
+  Pedido            Pedido[]
+  Movimento         Movimento[]
+}
+
+model TipoReparo {
+  id             Int          @id @default(autoincrement())
+  nome           String
+  categoria      String
+  departamentoId Int
+  departamento   Departamento @relation(fields: [departamentoId], references: [id])
+  Pedido         Pedido[]
+}
+
+model Bancada {
+  id                Int                 @id @default(autoincrement())
+  nome              String
+  departamentoId    Int
+  departamento      Departamento        @relation(fields: [departamentoId], references: [id])
+  BancadaUtilizador BancadaUtilizador[]
+}
+
+model BancadaUtilizador {
+  id         Int       @id @default(autoincrement())
+  usuarioId  Int
+  bancadaId  Int
+  dataInicio DateTime  @default(now())
+  dataFim    DateTime?
+
+  usuario Utilizador @relation(fields: [usuarioId], references: [id])
+  bancada Bancada    @relation(fields: [bancadaId], references: [id])
+}
+
+model Pedido {
+  id                 Int      @id @default(autoincrement())
+  requestId          String   @unique
+  orderNumber        String
+  tipoReparoId       Int
+  localizacaoAtualId Int
+  tecnicoId          Int
+  dataCriacao        DateTime @default(now())
+  dataAtualizacao    DateTime @updatedAt
+  finalizado         Boolean  @default(false)
+
+  tipoReparo       TipoReparo        @relation(fields: [tipoReparoId], references: [id])
+  localizacaoAtual Localizacao       @relation(fields: [localizacaoAtualId], references: [id])
+  tecnico          Utilizador        @relation(fields: [tecnicoId], references: [id])
+  PedidoSparePart  PedidoSparePart[]
+  Movimento        Movimento[]
+}
+
+model SparePart {
+  id              Int               @id @default(autoincrement())
+  codigo          String            @unique
+  descricao       String?
+  PedidoSparePart PedidoSparePart[]
+}
+
+model PedidoSparePart {
+  id          Int @id @default(autoincrement())
+  pedidoId    Int
+  sparePartId Int
+  quantidade  Int @default(1)
+
+  pedido    Pedido    @relation(fields: [pedidoId], references: [id])
+  sparePart SparePart @relation(fields: [sparePartId], references: [id])
+}
+
+model Movimento {
+  id                   Int      @id @default(autoincrement())
+  pedidoId             Int
+  localizacaoOrigemId  Int
+  localizacaoDestinoId Int
+  usuarioId            Int
+  dataMovimento        DateTime @default(now())
+  observacoes          String?
+
+  pedido             Pedido      @relation(fields: [pedidoId], references: [id])
+  localizacaoOrigem  Localizacao @relation("OrigemRelacao", fields: [localizacaoOrigemId], references: [id])
+  localizacaoDestino Localizacao @relation("DestinoRelacao", fields: [localizacaoDestinoId], references: [id])
+  usuario            Utilizador  @relation(fields: [usuarioId], references: [id])
+}

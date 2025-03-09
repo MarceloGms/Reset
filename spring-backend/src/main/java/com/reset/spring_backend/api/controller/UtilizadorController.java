@@ -9,11 +9,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 
 @RestController
 @RequestMapping("/utilizadores")
+@CrossOrigin(origins = { "http://localhost:5173", "http://localhost:8080" }, allowCredentials = "true")
 public class UtilizadorController {
 
     @Autowired
@@ -23,15 +23,15 @@ public class UtilizadorController {
     private JwtUtil jwtUtil;
 
     @PostMapping("/authenticate")
-    public Mono<ResponseEntity<Utilizador>> authenticate(@RequestParam String username, @RequestParam String password, HttpServletResponse response) {
+    public Mono<ResponseEntity<Utilizador>> authenticate(@RequestBody String username, @RequestBody String password,
+            HttpServletResponse response) {
+        Utilizador credentials = new Utilizador();
+        credentials.setUsername(username);
+        credentials.setPassword(password);
         return utilizadorService.authenticate(username, password)
                 .map(utilizador -> {
-                    String token = jwtUtil.generateToken(username);
-                    Cookie cookie = new Cookie("token", token);
-                    cookie.setHttpOnly(true);
-                    cookie.setPath("/");
-                    cookie.setMaxAge(86400); // 1 day in seconds
-                    response.addCookie(cookie);
+                    String token = jwtUtil.generateToken(credentials.getUsername());
+                    response.setHeader("Authorization", token);
                     return new ResponseEntity<>(utilizador, HttpStatus.OK);
                 })
                 .defaultIfEmpty(new ResponseEntity<>(HttpStatus.UNAUTHORIZED));
