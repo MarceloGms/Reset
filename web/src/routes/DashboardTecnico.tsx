@@ -1,10 +1,19 @@
 import React, { useEffect, useState } from "react";
 import OrdersTable from "../components/table";
-import Navbar from "../components/navbar"; // Importa a nova navbar
+import Navbar from "../components/navbar";
+
+// Define o tipo correto
+type Pedido = {
+  id: number;
+  requestId: string;
+  orderNumber: string;
+  finalizado: boolean;
+};
 
 const DashboardTecnico: React.FC = () => {
   const [token, setToken] = useState<string>("");
   const [userId, setUserId] = useState<string>("");
+  const [orders, setOrders] = useState<Pedido[]>([]);
 
   useEffect(() => {
     setToken(localStorage.getItem("token") || "");
@@ -22,18 +31,24 @@ const DashboardTecnico: React.FC = () => {
         console.error("Error parsing user JSON:", error);
       }
     }
+    const fetchData = async () => {
+      const response = await fetch("http://localhost:8800/api/auth/getOpenOrders");
+      const data: Pedido[] = await response.json();
+
+      console.log("Dados recebidos da API:", data);
+      setOrders(data);
+    };
+
+    fetchData();
   }, []);  
   return (
     <div>
       <Navbar />
-
-      {/* Conteúdo Principal */}
-      <main className="p-5 mt-16"> {/* Adicionamos margem no topo para evitar sobreposição */}
+      <main className="p-5 mt-16">
         <header className="mt-5 mb-5">
           <h1 className="text-3xl font-bold">Meus Pedidos</h1>
         </header>
 
-        {/* Cartões de status */}
         <section className="flex gap-5 mb-5 mt-2">
           <div className="bg-yellow-400 text-white p-5 rounded-lg shadow w-52 text-center">
             <h3 className="text-lg font-semibold">Pedidos Pendentes</h3>
@@ -49,7 +64,6 @@ const DashboardTecnico: React.FC = () => {
           </div>
         </section>
 
-        {/* Lista de pedidos */}
         <section>
           <h2 className="text-2xl font-bold mt-5 mb-5">Lista de Pedidos</h2>
           <OrdersTable />
