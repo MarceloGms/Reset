@@ -6,6 +6,7 @@ import DashboardTecnico from "./routes/DasboardTecnico";
 import PedidoDePecas from "./routes/pedidoPecas";
 import DashboardLogistica from "./routes/DashboardLogistica";
 import Definições from "./routes/Settings";
+import ManageLocations from "./routes/ManageLocations";
 
 function App() {
   const router = createBrowserRouter([
@@ -36,6 +37,10 @@ function App() {
     {
       path: "/definições",
       element: <Definições />,
+    },
+    {
+      path: "/locations",
+      element: <ManageLocations />,
     }
   ]);
 
