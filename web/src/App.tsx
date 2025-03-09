@@ -2,11 +2,13 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Auth from "./routes/Auth";
 import Home from "./routes/Home";
 import WorkStation from "./routes/workStation";
-import DashboardTecnico from "./routes/DasboardTecnico";
-import PedidoDePecas from "./routes/pedidoPecas";
+import DashboardTecnico from "./routes/DashboardTecnico";
 import DashboardLogistica from "./routes/DashboardLogistica";
 import Definições from "./routes/Settings";
 import ManageLocations from "./routes/ManageLocations";
+import NotFound from "./components/NotFound";
+import ProtectedRoute from "./components/ProtectedRoute";
+// import { AuthProvider } from "./components/AuthContext";
 
 function App() {
   const router = createBrowserRouter([
@@ -20,31 +22,60 @@ function App() {
     },
     {
       path: "/workStation",
-      element: <WorkStation />,
+      element: (
+        <ProtectedRoute>
+          <WorkStation />
+        </ProtectedRoute>
+      ),
     },
     {
       path: "/dashboard",
-      element: <DashboardTecnico />,
+      element: (
+        // <ProtectedRoute>
+        //   <DashboardTecnico />
+        // </ProtectedRoute>
+        <DashboardTecnico />
+      ),
     },
     {
       path: "/dashboardLogistica",
-      element: <DashboardLogistica />,
-    },
-    {
-      path: "/minhas-pecas",
-      element: <PedidoDePecas />,
+      element: (
+        // <ProtectedRoute>
+        //   <DashboardLogistica />
+        // </ProtectedRoute>
+        <DashboardLogistica />
+      ),
     },
     {
       path: "/definições",
-      element: <Definições />,
+      element: (
+        // <ProtectedRoute>
+        //   <Definições />
+        // </ProtectedRoute>
+        <Definições />
+      ),
     },
     {
       path: "/locations",
-      element: <ManageLocations />,
-    }
+      element: (
+        // <ProtectedRoute>
+        //   <ManageLocations />
+        // </ProtectedRoute>
+        <ManageLocations />
+      ),
+    },
+    {
+      path: "*", // Rota "catch-all" para páginas não encontradas
+      element: <NotFound />,
+    },
   ]);
 
-  return <RouterProvider router={router} />;
+  return (
+    // <AuthProvider>
+    //   <RouterProvider router={router} />
+    // </AuthProvider>
+    <RouterProvider router={router} />
+  );
 }
 
 export default App;
