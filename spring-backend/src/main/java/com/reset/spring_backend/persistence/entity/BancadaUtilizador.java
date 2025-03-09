@@ -12,7 +12,7 @@ public class BancadaUtilizador {
     
     @Id
     private Long id;
-    private Long usuarioId; // Referência ao usuário
+    private Long utilizadorId; // Referência ao usuário
     private Long bancadaId; // Referência à bancada
     private LocalDateTime dataInicio;
     private LocalDateTime dataFim;

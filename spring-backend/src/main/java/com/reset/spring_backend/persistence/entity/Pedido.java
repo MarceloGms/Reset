@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 @Data
 @Table("pedido")
 public class Pedido {
-    
+
     @Id
     private Long id;
     private String requestId;
@@ -20,4 +20,8 @@ public class Pedido {
     private LocalDateTime dataCriacao;
     private LocalDateTime dataAtualizacao;
     private boolean finalizado;
+    private Long sparePartId; // Add this property
+    private Long clienteId;
+    private LocalDateTime dataPedido;
+    private String status;
 }

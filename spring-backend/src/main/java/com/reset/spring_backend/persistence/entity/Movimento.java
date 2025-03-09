@@ -14,8 +14,9 @@ public class Movimento {
     private Long id;
     private Long pedidoId; // Referência ao pedido
     private Long localizacaoOrigemId; // Referência à localização de origem
+    private long localizacaoId;
     private Long localizacaoDestinoId; // Referência à localização de destino
-    private Long usuarioId; // Referência ao usuário
+    private Long utilizadorId; // Referência ao usuário
     private LocalDateTime dataMovimento;
     private String observacoes;
 }

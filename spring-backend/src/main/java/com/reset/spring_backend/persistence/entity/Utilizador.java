@@ -12,6 +12,6 @@ public class Utilizador {
     private Long id;
     private String nome;
     private String username;
-    private String passwordHash;
+    private String password;
     private String tipo; // "tecnico" ou "logistica"
 }

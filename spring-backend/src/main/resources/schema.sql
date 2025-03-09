@@ -1,7 +1,14 @@
 -- Criação das tabelas
+-- Tabela de Localizações
+CREATE TABLE IF NOT EXISTS LOCALIZACAO (
+    id SERIAL PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL,
+    tipo VARCHAR(20) NOT NULL CHECK (tipo IN ('picking', 'stock_out', 'picking_point', 'bancada'))
+);
+
 -- Tabela de Utilizadores
-CREATE TABLE UTILIZADORES (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
+CREATE TABLE IF NOT EXISTS UTILIZADORES (
+    id SERIAL PRIMARY KEY,
     nome VARCHAR(100) NOT NULL,
     username VARCHAR(50) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
@@ -9,23 +16,16 @@ CREATE TABLE UTILIZADORES (
 );
 
 -- Tabela de Departamentos
-CREATE TABLE DEPARTAMENTO (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
+CREATE TABLE IF NOT EXISTS DEPARTAMENTO (
+    id SERIAL PRIMARY KEY,
     nome VARCHAR(100) NOT NULL,
     picking_point_id INTEGER NULL,
     FOREIGN KEY (picking_point_id) REFERENCES LOCALIZACAO(id)
 );
 
--- Tabela de Localizações
-CREATE TABLE LOCALIZACAO (
-    id INTEGER PRIMARY KEY,
-    nome VARCHAR(100) NOT NULL,
-    tipo VARCHAR(20) NOT NULL CHECK (tipo IN ('picking', 'stock_out', 'picking_point', 'bancada'))
-);
-
 -- Tabela de Tipos de Reparo
-CREATE TABLE TIPO_REPARO (
-    id INTEGER PRIMARY KEY,
+CREATE TABLE IF NOT EXISTS TIPO_REPARO (
+    id SERIAL PRIMARY KEY,
     nome VARCHAR(100) NOT NULL,
     categoria VARCHAR(50) NOT NULL,
     departamento_id INTEGER NOT NULL,
@@ -33,50 +33,50 @@ CREATE TABLE TIPO_REPARO (
 );
 
 -- Tabela de Bancadas
-CREATE TABLE BANCADA (
-    id INTEGER PRIMARY KEY,
+CREATE TABLE IF NOT EXISTS BANCADA (
+    id SERIAL PRIMARY KEY,
     nome VARCHAR(50) NOT NULL,
     departamento_id INTEGER NOT NULL,
     FOREIGN KEY (departamento_id) REFERENCES DEPARTAMENTO(id)
 );
 
 -- Tabela de Associação entre Bancadas e Usuários
-CREATE TABLE BANCADA_UTILIZADOR (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
+CREATE TABLE IF NOT EXISTS BANCADA_UTILIZADOR (
+    id SERIAL PRIMARY KEY,
     usuario_id INTEGER NOT NULL,
     bancada_id INTEGER NOT NULL,
-    data_inicio DATETIME DEFAULT CURRENT_TIMESTAMP,
-    data_fim DATETIME,
-    FOREIGN KEY (usuario_id) REFERENCES USUARIO(id),
+    data_inicio TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    data_fim TIMESTAMP,
+    FOREIGN KEY (usuario_id) REFERENCES UTILIZADORES(id),
     FOREIGN KEY (bancada_id) REFERENCES BANCADA(id)
 );
 
 -- Tabela de Pedidos
-CREATE TABLE PEDIDO (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
+CREATE TABLE IF NOT EXISTS PEDIDO (
+    id SERIAL PRIMARY KEY,
     request_id VARCHAR(50) NOT NULL UNIQUE,
     order_number VARCHAR(50) NOT NULL,
     tipo_reparo_id INTEGER NOT NULL,
     localizacao_atual_id INTEGER NOT NULL,
     tecnico_id INTEGER NOT NULL,
-    data_criacao DATETIME DEFAULT CURRENT_TIMESTAMP,
-    data_atualizacao DATETIME DEFAULT CURRENT_TIMESTAMP,
+    data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    data_atualizacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     finalizado BOOLEAN DEFAULT FALSE,
     FOREIGN KEY (tipo_reparo_id) REFERENCES TIPO_REPARO(id),
     FOREIGN KEY (localizacao_atual_id) REFERENCES LOCALIZACAO(id),
-    FOREIGN KEY (tecnico_id) REFERENCES USUARIO(id)
+    FOREIGN KEY (tecnico_id) REFERENCES UTILIZADORES(id)
 );
 
 -- Tabela de Peças de Reposição
-CREATE TABLE SPARE_PART (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
+CREATE TABLE IF NOT EXISTS SPARE_PART (
+    id SERIAL PRIMARY KEY,
     codigo VARCHAR(50) NOT NULL UNIQUE,
     descricao TEXT
 );
 
 -- Tabela de Associação entre Pedidos e Peças
-CREATE TABLE PEDIDO_SPARE_PART (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
+CREATE TABLE IF NOT EXISTS PEDIDO_SPARE_PART (
+    id SERIAL PRIMARY KEY,
     pedido_id INTEGER NOT NULL,
     spare_part_id INTEGER NOT NULL,
     quantidade INTEGER NOT NULL DEFAULT 1,
@@ -85,18 +85,18 @@ CREATE TABLE PEDIDO_SPARE_PART (
 );
 
 -- Tabela de Movimentos
-CREATE TABLE MOVIMENTO (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
+CREATE TABLE IF NOT EXISTS MOVIMENTO (
+    id SERIAL PRIMARY KEY,
     pedido_id INTEGER NOT NULL,
     localizacao_origem_id INTEGER NOT NULL,
     localizacao_destino_id INTEGER NOT NULL,
     usuario_id INTEGER NOT NULL,
-    data_movimento DATETIME DEFAULT CURRENT_TIMESTAMP,
+    data_movimento TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     observacoes TEXT,
     FOREIGN KEY (pedido_id) REFERENCES PEDIDO(id),
     FOREIGN KEY (localizacao_origem_id) REFERENCES LOCALIZACAO(id),
     FOREIGN KEY (localizacao_destino_id) REFERENCES LOCALIZACAO(id),
-    FOREIGN KEY (usuario_id) REFERENCES USUARIO(id)
+    FOREIGN KEY (usuario_id) REFERENCES UTILIZADORES(id)
 );
 
 -- Atualizar a referência ao picking_point após a criação das tabelas
@@ -142,8 +142,8 @@ INSERT INTO BANCADA (id, nome, departamento_id) VALUES (1100, 'WSB100', 1);
 INSERT INTO BANCADA (id, nome, departamento_id) VALUES (1200, 'WSB200', 2);
 
 -- Usuários de exemplo (senha: 'password')
-INSERT INTO USUARIO (nome, username, password_hash, tipo) 
+INSERT INTO UTILIZADORES (nome, username, password, tipo) 
 VALUES ('Técnico Exemplo', 'tecnico1', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'tecnico');
 
-INSERT INTO USUARIO (nome, username, password_hash, tipo) 
+INSERT INTO UTILIZADORES (nome, username, password, tipo) 
 VALUES ('Logística Exemplo', 'logistica1', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'logistica');
