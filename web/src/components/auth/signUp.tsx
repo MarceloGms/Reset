@@ -6,14 +6,14 @@ interface SignUpProps {
 }
 
 export default function SignUp({ setIsSignUp }: SignUpProps) {
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  function signUp(event: React.FormEvent<HTMLFormElement>) {
+  async function signUp(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     console.log(
-      `Email: ${email}, Password: ${password}, Confirm Password: ${confirmPassword}`
+      `Email: ${username}, Password: ${password}, Confirm Password: ${confirmPassword}`
     );
 
     if (password !== confirmPassword) {
@@ -22,6 +22,23 @@ export default function SignUp({ setIsSignUp }: SignUpProps) {
     }
 
     // Add sign up logic here
+    try {
+      const result = await fetch("http://localhost:8800/api/auth/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username,
+          password,
+          tipo: "tecnico",
+        }),
+      });
+      const data = await result.json();
+      console.log(data);
+    } catch (error) {
+      console.error("An error occurred", error);
+    }
   }
 
   return (
@@ -29,14 +46,14 @@ export default function SignUp({ setIsSignUp }: SignUpProps) {
       <h1 className="text-2xl font-semibold text-center">Sign Up</h1>
       <form className="space-y-4 mt-4" onSubmit={signUp}>
         <div>
-          <p>Email</p>
+          <p>Username</p>
           <input
             className="w-full border border-gray-300 rounded px-3 py-2"
-            id="email"
-            type="email"
+            id="username"
+            type="text"
             required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
           />
         </div>
         <div>
@@ -62,7 +79,7 @@ export default function SignUp({ setIsSignUp }: SignUpProps) {
           />
         </div>
         <div>
-          <Button text="Sign Un" type="submit" />
+          <Button text="Sign Up" type="submit" />
         </div>
         <div className="text-center">
           <button
