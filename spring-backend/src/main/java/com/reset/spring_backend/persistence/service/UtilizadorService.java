@@ -11,12 +11,23 @@ public class UtilizadorService {
 
     @Autowired
     private UtilizadorRepository utilizadorRepository;
-
+    
     public Mono<Utilizador> findByUsername(String username) {
         return utilizadorRepository.findByUsername(username);
     }
 
     public Mono<Utilizador> authenticate(String username, String password) {
-        return utilizadorRepository.findByUsernameAndPassword(username, password);
+        return utilizadorRepository.findByUsername(username)
+                .flatMap(utilizador -> {
+                    if (password == utilizador.getPassword()) {
+                        return Mono.just(utilizador);
+                    } else {
+                        return Mono.empty();
+                    }
+                });
+    }
+
+    public Mono<Utilizador> registerUser(Utilizador utilizador) {
+        return utilizadorRepository.save(utilizador);
     }
 }
