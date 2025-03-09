@@ -9,7 +9,7 @@ import reactor.core.publisher.Mono;
 @Repository
 public interface UtilizadorRepository extends ReactiveCrudRepository<Utilizador, Long> {
     Mono<Utilizador> findByUsername(String username);
-    Mono<Utilizador> findByUsernameAndPasswordHash(String username, String passwordHash);
+    Mono<Utilizador> findByUsernameAndPassword(String username, String password);
     Mono<Utilizador> findByUsernameAndTipo(String username, String tipo);
     Mono<Utilizador> findByUsernameAndTipoAndIdNot(String username, String tipo, Long id);
     Mono<Utilizador> findByUsernameAndIdNot(String username, Long id);

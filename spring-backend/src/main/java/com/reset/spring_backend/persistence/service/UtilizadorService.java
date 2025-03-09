@@ -16,7 +16,7 @@ public class UtilizadorService {
         return utilizadorRepository.findByUsername(username);
     }
 
-    public Mono<Utilizador> authenticate(String username, String passwordHash) {
-        return utilizadorRepository.findByUsernameAndPasswordHash(username, passwordHash);
+    public Mono<Utilizador> authenticate(String username, String password) {
+        return utilizadorRepository.findByUsernameAndPassword(username, password);
     }
 }
