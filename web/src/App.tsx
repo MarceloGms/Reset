@@ -1,21 +1,25 @@
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import {
+  createBrowserRouter,
+  Navigate,
+  RouterProvider,
+} from "react-router-dom";
 import Auth from "./routes/Auth";
-import Home from "./routes/Home";
 import WorkStation from "./routes/workStation";
 import DashboardTecnico from "./routes/DashboardTecnico";
 import DashboardLogistica from "./routes/DashboardLogistica";
 import Definições from "./routes/Settings";
 import ManageLocations from "./routes/ManageLocations";
+import { useContext } from "react";
+import { AuthContext } from "./context/authContext";
 import NotFound from "./components/NotFound";
-import ProtectedRoute from "./components/ProtectedRoute";
-// import { AuthProvider } from "./components/AuthContext";
+
+function RequireAuth({ children }: { children: JSX.Element }) {
+  const { currentUser } = useContext(AuthContext) as { currentUser: string };
+  return !currentUser ? <Navigate to="/auth" /> : children;
+}
 
 function App() {
   const router = createBrowserRouter([
-    {
-      path: "/",
-      element: <Home />,
-    },
     {
       path: "/auth",
       element: <Auth />,
@@ -23,45 +27,41 @@ function App() {
     {
       path: "/workStation",
       element: (
-        <ProtectedRoute>
+        <RequireAuth>
           <WorkStation />
-        </ProtectedRoute>
+        </RequireAuth>
       ),
     },
     {
       path: "/dashboard",
       element: (
-        // <ProtectedRoute>
-        //   <DashboardTecnico />
-        // </ProtectedRoute>
-        <DashboardTecnico />
+        <RequireAuth>
+          <DashboardTecnico />
+        </RequireAuth>
       ),
     },
     {
       path: "/dashboardLogistica",
       element: (
-        // <ProtectedRoute>
-        //   <DashboardLogistica />
-        // </ProtectedRoute>
-        <DashboardLogistica />
+        <RequireAuth>
+          <DashboardLogistica />
+        </RequireAuth>
       ),
     },
     {
       path: "/definições",
       element: (
-        // <ProtectedRoute>
-        //   <Definições />
-        // </ProtectedRoute>
-        <Definições />
+        <RequireAuth>
+          <Definições />
+        </RequireAuth>
       ),
     },
     {
       path: "/locations",
       element: (
-        // <ProtectedRoute>
-        //   <ManageLocations />
-        // </ProtectedRoute>
-        <ManageLocations />
+        <RequireAuth>
+          <ManageLocations />
+        </RequireAuth>
       ),
     },
     {
@@ -70,12 +70,7 @@ function App() {
     },
   ]);
 
-  return (
-    // <AuthProvider>
-    //   <RouterProvider router={router} />
-    // </AuthProvider>
-    <RouterProvider router={router} />
-  );
+  return <RouterProvider router={router} />;
 }
 
 export default App;

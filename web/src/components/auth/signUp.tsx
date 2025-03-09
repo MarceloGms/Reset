@@ -8,6 +8,7 @@ interface SignUpProps {
 export default function SignUp({ setIsSignUp }: SignUpProps) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [tipo, setTipo] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
   async function signUp(event: React.FormEvent<HTMLFormElement>) {
@@ -31,11 +32,12 @@ export default function SignUp({ setIsSignUp }: SignUpProps) {
         body: JSON.stringify({
           username,
           password,
-          tipo: "tecnico",
+          tipo,
         }),
       });
       const data = await result.json();
       console.log(data);
+      setIsSignUp(false);
     } catch (error) {
       console.error("An error occurred", error);
     }
@@ -55,6 +57,19 @@ export default function SignUp({ setIsSignUp }: SignUpProps) {
             value={username}
             onChange={(e) => setUsername(e.target.value)}
           />
+        </div>
+        <div>
+          <p>Username</p>
+          <select
+            className="w-full border border-gray-300 rounded px-3 h-12"
+            id="tipo"
+            required
+            value={tipo}
+            onChange={(e) => setTipo(e.target.value)}
+          >
+            <option value="tecnico">Tecnico</option>
+            <option value="logistica">Logistica</option>
+          </select>
         </div>
         <div>
           <p>Password</p>

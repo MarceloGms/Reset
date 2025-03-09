@@ -1,6 +1,7 @@
-import React from 'react';
-import { Navigate, useLocation } from 'react-router-dom';
-import { useAuth } from './AuthContext';
+/* import { Navigate, useLocation } from "react-router-dom";
+//import { useAuth } from './AuthContext';
+
+import { useAuth } from "../context/authContext";
 
 interface ProtectedRouteProps {
   children: JSX.Element;
@@ -18,3 +19,4 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
 };
 
 export default ProtectedRoute;
+ */

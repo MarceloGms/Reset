@@ -1,5 +1,7 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import Button from "../../components/button";
+import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../../context/authContext";
 
 interface SignInProps {
   setIsSignUp: (value: boolean) => void;
@@ -8,6 +10,10 @@ interface SignInProps {
 export default function SignIn({ setIsSignUp }: SignInProps) {
   const [username, setUsernames] = useState("");
   const [password, setPassword] = useState("");
+
+  const navigate = useNavigate();
+
+  const { updateUser, updateToken } = useContext(AuthContext);
 
   async function signIn(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -34,14 +40,18 @@ export default function SignIn({ setIsSignUp }: SignInProps) {
 
       const data = await result.json();
 
-      console.log(data);
-
       // Store token and username in local storage
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("username", data.user.username);
+      console.log("User received:", data);
+      updateUser(data.user);
+      updateToken(data.token);
 
-      // Redirect to workStation or desired page
-      //window.location.href = "/workStation";
+      if (data.user.tipo === "tecnico") {
+        navigate("/workStation");
+      }
+
+      if (data.user.tipo === "logistica") {
+        navigate("/dashboardLogistica");
+      }
     } catch (error) {
       console.error("An error occurred", error);
     }
