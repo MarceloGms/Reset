@@ -1,52 +1,68 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import { Box, Button, TextField } from '@mui/material';
 import CustomSnackbar from './CustomSnackBar';
+
+
+interface Location {
+  id: number;
+  name: string;
+}
 
 interface Order {
   id: number;
   requestId: string;
   orderNumber: string;
-  parts: string;
-  location: string;
+  tipoReparoId: number;
+  localizacaoAtualId: number;
+  tecnicoId: number;
+  finalizado: boolean;
   status: string;
-  updatedAt: Date;
 }
 
 const OrdersTable: React.FC = () => {
-  const [searchTerm, setSearchTerm] = useState('');
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [locations, setLocations] = useState<Location[]>([]);
+  const [searchTerm, setSearchTerm] = useState<string>("");
 
-  const data = useMemo<Order[]>(() => [
-    {
-      id: 1,
-      requestId: '12345',
-      orderNumber: '50179738',
-      parts: 'Peça X, Peça Y',
-      location: 'Picking Point (Depto. Major)',
-      status: 'Pronto para Recolha',
-      updatedAt: new Date('2025-03-08T10:30:00'),
-    },
-    {
-      id: 2,
-      requestId: '67890',
-      orderNumber: '50180704',
-      parts: 'Peça A',
-      location: 'Stock Out',
-      status: 'Em Processamento',
-      updatedAt: new Date('2025-03-08T09:00:00'),
-    },
-  ], []);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const getOrders = await fetch("http://localhost:8800/api/auth/getOpenOrders");
+        const ordersData: Order[] = await getOrders.json();
 
+        // const getLocations = await fetch("http://localhost:8800/api/auth/getLocations");
+        // const locationsData: Location[] = await getLocations.json();
+
+        console.log("Pedidos Recebidos:", ordersData);
+        // console.log("Localizações Recebidas:", locationsData);
+
+        setOrders(ordersData);
+        // setLocations(locationsData);
+      } catch (error) {
+        console.error("Erro ao buscar dados:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  // Função para encontrar o nome da localização pelo ID
+  const getLocationName = (locationId: number): string => {
+    const location = locations.find((loc) => loc.id === locationId);
+    return location ? location.name : "Desconhecido";
+  };
+
+  // Filtragem baseada no termo de pesquisa
   const filteredData = useMemo(() => {
-    if (!searchTerm) return data;
-    return data.filter((order) =>
-      order.requestId.toString().toLowerCase().includes(searchTerm.toLowerCase()) || 
+    if (!searchTerm) return orders;
+    return orders.filter((order) =>
+      order.requestId.toLowerCase().includes(searchTerm.toLowerCase()) || 
       order.orderNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      order.parts.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      order.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      getLocationName(order.localizacaoAtualId).toLowerCase().includes(searchTerm.toLowerCase()) ||
       order.status.toLowerCase().includes(searchTerm.toLowerCase())
     );
-  }, [searchTerm, data]);
+  }, [searchTerm, orders, locations]);
 
   // Estado para controlar o CustomSnackbar
   const [snackbar, setSnackbar] = useState({
