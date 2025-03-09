@@ -1,0 +1,65 @@
+import React from "react";
+import { Dialog, DialogTitle, DialogContent, DialogActions, Button, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
+import { Order } from "../routes/DashboardLogistica";
+
+interface UpdateOrderModalProps {
+  open: boolean;
+  onClose: () => void;
+  order: Order | null;
+  newStatus: string;
+  setNewStatus: (value: string) => void;
+  newLocation: string;
+  setNewLocation: (value: string) => void;
+  onUpdate: () => void;
+  locationMapping: { [key: string]: string };
+}
+
+const UpdateOrderModal: React.FC<UpdateOrderModalProps> = ({
+  open,
+  onClose,
+  order,
+  newStatus,
+  setNewStatus,
+  newLocation,
+  setNewLocation,
+  onUpdate,
+
+}) => {
+  if (!order) return null;
+
+  return (
+    <Dialog open={open} onClose={onClose}>
+      <DialogTitle>Atualizar Pedido</DialogTitle>
+      <DialogContent>
+        <FormControl fullWidth margin="normal">
+          <InputLabel>Estado</InputLabel>
+          <Select value={newStatus} onChange={(e) => setNewStatus(e.target.value as string)}>
+            <MenuItem value="Em Picking">Em Picking</MenuItem>
+            <MenuItem value="Stock Out">Stock Out</MenuItem>
+            <MenuItem value="Pronto para Recolha">Pronto para Recolha</MenuItem>
+          </Select>
+        </FormControl>
+        <FormControl fullWidth margin="normal">
+          <InputLabel>Localização</InputLabel>
+          <Select value={newLocation} onChange={(e) => setNewLocation(e.target.value as string)}>
+            <MenuItem value="Picking">Picking</MenuItem>
+            <MenuItem value="Stock Out">Stock Out</MenuItem>
+            <MenuItem value="Zona de Recolha (Depto. Major)">Zona de Recolha (Depto. Major)</MenuItem>
+            <MenuItem value="Zona de Recolha (Depto. Middle)">Zona de Recolha (Depto. Middle)</MenuItem>
+            <MenuItem value="Zona de Recolha (Depto. Minor)">Zona de Recolha (Depto. Minor)</MenuItem>
+            <MenuItem value="Zona de Recolha (Depto. Surgical)">Zona de Recolha (Depto. Surgical)</MenuItem>
+            <MenuItem value="Zona de Recolha (Depto. Electronics)">Zona de Recolha (Depto. Electronics)</MenuItem>
+          </Select>
+        </FormControl>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={onClose}>Cancelar</Button>
+        <Button variant="contained" color="primary" onClick={onUpdate}>
+          Confirmar
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+};
+
+export default UpdateOrderModal;
