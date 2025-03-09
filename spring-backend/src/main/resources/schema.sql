@@ -6,21 +6,19 @@ CREATE TABLE IF NOT EXISTS LOCALIZACAO (
     tipo VARCHAR(20) NOT NULL CHECK (tipo IN ('picking', 'stock_out', 'picking_point', 'bancada'))
 );
 
--- Tabela de Utilizadores
+CREATE TABLE IF NOT EXISTS DEPARTAMENTO (
+    id SERIAL PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL,
+    picking_point_id INTEGER NULL REFERENCES LOCALIZACAO(id) -- Adiciona a FK aqui diretamente
+);
+
+
 CREATE TABLE IF NOT EXISTS UTILIZADORES (
     id SERIAL PRIMARY KEY,
     nome VARCHAR(100) NOT NULL,
     username VARCHAR(50) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
     tipo VARCHAR(20) NOT NULL CHECK (tipo IN ('tecnico', 'logistica'))
-);
-
--- Tabela de Departamentos
-CREATE TABLE IF NOT EXISTS DEPARTAMENTO (
-    id SERIAL PRIMARY KEY,
-    nome VARCHAR(100) NOT NULL,
-    picking_point_id INTEGER NULL,
-    FOREIGN KEY (picking_point_id) REFERENCES LOCALIZACAO(id)
 );
 
 -- Tabela de Tipos de Reparo
@@ -100,50 +98,50 @@ CREATE TABLE IF NOT EXISTS MOVIMENTO (
 );
 
 -- Atualizar a referência ao picking_point após a criação das tabelas
-ALTER TABLE DEPARTAMENTO
-ADD CONSTRAINT fk_picking_point
-FOREIGN KEY (picking_point_id) REFERENCES LOCALIZACAO(id);
+-- ALTER TABLE DEPARTAMENTO
+-- ADD CONSTRAINT fk_picking_point
+-- FOREIGN KEY (picking_point_id) REFERENCES LOCALIZACAO(id);
 
 -- Inserção dos dados iniciais
 
 -- Localizações padrão
-INSERT INTO LOCALIZACAO (id, nome, tipo) VALUES (200, 'Picking', 'picking');
-INSERT INTO LOCALIZACAO (id, nome, tipo) VALUES (201, 'Stock Out', 'stock_out');
+-- INSERT INTO LOCALIZACAO (id, nome, tipo) VALUES (200, 'Picking', 'picking');
+-- INSERT INTO LOCALIZACAO (id, nome, tipo) VALUES (201, 'Stock Out', 'stock_out');
 
--- Localizações para pontos de recolha de departamentos (exemplo)
-INSERT INTO LOCALIZACAO (id, nome, tipo) VALUES (300, 'Picking Point - Major', 'picking_point');
-INSERT INTO LOCALIZACAO (id, nome, tipo) VALUES (301, 'Picking Point - Middle', 'picking_point');
-INSERT INTO LOCALIZACAO (id, nome, tipo) VALUES (302, 'Picking Point - Minor', 'picking_point');
-INSERT INTO LOCALIZACAO (id, nome, tipo) VALUES (303, 'Picking Point - Surgical', 'picking_point');
-INSERT INTO LOCALIZACAO (id, nome, tipo) VALUES (304, 'Picking Point - Electronics', 'picking_point');
+-- -- Localizações para pontos de recolha de departamentos (exemplo)
+-- INSERT INTO LOCALIZACAO (id, nome, tipo) VALUES (300, 'Picking Point - Major', 'picking_point');
+-- INSERT INTO LOCALIZACAO (id, nome, tipo) VALUES (301, 'Picking Point - Middle', 'picking_point');
+-- INSERT INTO LOCALIZACAO (id, nome, tipo) VALUES (302, 'Picking Point - Minor', 'picking_point');
+-- INSERT INTO LOCALIZACAO (id, nome, tipo) VALUES (303, 'Picking Point - Surgical', 'picking_point');
+-- INSERT INTO LOCALIZACAO (id, nome, tipo) VALUES (304, 'Picking Point - Electronics', 'picking_point');
 
--- Localizações para bancadas
-INSERT INTO LOCALIZACAO (id, nome, tipo) VALUES (1100, 'WSB100', 'bancada');
-INSERT INTO LOCALIZACAO (id, nome, tipo) VALUES (1200, 'WSB200', 'bancada');
+-- -- Localizações para bancadas
+-- INSERT INTO LOCALIZACAO (id, nome, tipo) VALUES (1100, 'WSB100', 'bancada');
+-- INSERT INTO LOCALIZACAO (id, nome, tipo) VALUES (1200, 'WSB200', 'bancada');
 
--- Departamentos
-INSERT INTO DEPARTAMENTO (id, nome, picking_point_id) VALUES (1, 'Major Department', 300);
-INSERT INTO DEPARTAMENTO (id, nome, picking_point_id) VALUES (2, 'Middle Department', 301);
-INSERT INTO DEPARTAMENTO (id, nome, picking_point_id) VALUES (3, 'Minor Department', 302);
-INSERT INTO DEPARTAMENTO (id, nome, picking_point_id) VALUES (4, 'Surgical Department', 303);
-INSERT INTO DEPARTAMENTO (id, nome, picking_point_id) VALUES (5, 'Electronics Department', 304);
+-- -- Departamentos
+-- INSERT INTO DEPARTAMENTO (id, nome, picking_point_id) VALUES (1, 'Major Department', 300);
+-- INSERT INTO DEPARTAMENTO (id, nome, picking_point_id) VALUES (2, 'Middle Department', 301);
+-- INSERT INTO DEPARTAMENTO (id, nome, picking_point_id) VALUES (3, 'Minor Department', 302);
+-- INSERT INTO DEPARTAMENTO (id, nome, picking_point_id) VALUES (4, 'Surgical Department', 303);
+-- INSERT INTO DEPARTAMENTO (id, nome, picking_point_id) VALUES (5, 'Electronics Department', 304);
 
--- Tipos de reparo
-INSERT INTO TIPO_REPARO (id, nome, categoria, departamento_id) VALUES (100, 'Major Type 1', 'Major', 1);
-INSERT INTO TIPO_REPARO (id, nome, categoria, departamento_id) VALUES (101, 'Major Type 2', 'Major', 1);
-INSERT INTO TIPO_REPARO (id, nome, categoria, departamento_id) VALUES (102, 'Major Type 3', 'Major', 1);
-INSERT INTO TIPO_REPARO (id, nome, categoria, departamento_id) VALUES (103, 'Middle Type', 'Middle', 2);
-INSERT INTO TIPO_REPARO (id, nome, categoria, departamento_id) VALUES (104, 'Minor Type', 'Minor', 3);
-INSERT INTO TIPO_REPARO (id, nome, categoria, departamento_id) VALUES (117, 'Surgical Type', 'Surgical', 4);
-INSERT INTO TIPO_REPARO (id, nome, categoria, departamento_id) VALUES (111, 'Electronics Type', 'Electronics', 5);
+-- -- Tipos de reparo
+-- INSERT INTO TIPO_REPARO (id, nome, categoria, departamento_id) VALUES (100, 'Major Type 1', 'Major', 1);
+-- INSERT INTO TIPO_REPARO (id, nome, categoria, departamento_id) VALUES (101, 'Major Type 2', 'Major', 1);
+-- INSERT INTO TIPO_REPARO (id, nome, categoria, departamento_id) VALUES (102, 'Major Type 3', 'Major', 1);
+-- INSERT INTO TIPO_REPARO (id, nome, categoria, departamento_id) VALUES (103, 'Middle Type', 'Middle', 2);
+-- INSERT INTO TIPO_REPARO (id, nome, categoria, departamento_id) VALUES (104, 'Minor Type', 'Minor', 3);
+-- INSERT INTO TIPO_REPARO (id, nome, categoria, departamento_id) VALUES (117, 'Surgical Type', 'Surgical', 4);
+-- INSERT INTO TIPO_REPARO (id, nome, categoria, departamento_id) VALUES (111, 'Electronics Type', 'Electronics', 5);
 
--- Bancadas
-INSERT INTO BANCADA (id, nome, departamento_id) VALUES (1100, 'WSB100', 1);
-INSERT INTO BANCADA (id, nome, departamento_id) VALUES (1200, 'WSB200', 2);
+-- -- Bancadas
+-- INSERT INTO BANCADA (id, nome, departamento_id) VALUES (1100, 'WSB100', 1);
+-- INSERT INTO BANCADA (id, nome, departamento_id) VALUES (1200, 'WSB200', 2);
 
--- Usuários de exemplo (senha: 'password')
-INSERT INTO UTILIZADORES (nome, username, password, tipo) 
-VALUES ('Técnico Exemplo', 'tecnico1', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'tecnico');
+-- -- Usuários de exemplo (senha: 'password')
+-- INSERT INTO UTILIZADORES (nome, username, password, tipo) 
+-- VALUES ('Técnico Exemplo', 'tecnico1', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'tecnico');
 
-INSERT INTO UTILIZADORES (nome, username, password, tipo) 
-VALUES ('Logística Exemplo', 'logistica1', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'logistica');
+-- INSERT INTO UTILIZADORES (nome, username, password, tipo) 
+-- VALUES ('Logística Exemplo', 'logistica1', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'logistica');
