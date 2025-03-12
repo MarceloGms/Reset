@@ -1,8 +1,9 @@
-import React, { useState } from "react";
-import { DataGrid, GridColDef, GridRenderCellParams } from "@mui/x-data-grid";
+import { useState } from "react";
+import { DataGrid } from "@mui/x-data-grid";
+import type { GridColDef, GridRenderCellParams } from "@mui/x-data-grid";
 import { Box, Button } from "@mui/material";
-import { Order } from "../routes/DashboardLogistica";
-import CustomSnackbar from './CustomSnackBar';
+import type { Order } from "../routes/DashboardLogistica";
+import CustomSnackbar from "./CustomSnackBar";
 
 interface OrdersTableProps {
   orders: Order[];
@@ -10,7 +11,11 @@ interface OrdersTableProps {
   onViewHistory: (order: Order) => void;
 }
 
-const OrdersTable: React.FC<OrdersTableProps> = ({ orders, onEdit, onViewHistory }) => {
+const OrdersTable: React.FC<OrdersTableProps> = ({
+  orders,
+  onEdit,
+  onViewHistory,
+}) => {
   // Estado para controlar o CustomSnackbar
   const [snackbar, setSnackbar] = useState({
     open: false,
@@ -19,14 +24,19 @@ const OrdersTable: React.FC<OrdersTableProps> = ({ orders, onEdit, onViewHistory
   });
 
   const handleCloseSnackbar = () => {
-    setSnackbar(prev => ({ ...prev, open: false }));
+    setSnackbar((prev) => ({ ...prev, open: false }));
   };
 
   const columns: GridColDef[] = [
     { field: "requestId", headerName: "Request ID", flex: 1, resizable: false },
     { field: "orderNumber", headerName: "Pedido", flex: 1, resizable: false },
     { field: "parts", headerName: "Peças", flex: 1.5, resizable: false },
-    { field: "location", headerName: "Localização Atual", flex: 1.5, resizable: false },
+    {
+      field: "location",
+      headerName: "Localização Atual",
+      flex: 1.5,
+      resizable: false,
+    },
     {
       field: "status",
       headerName: "Estado",

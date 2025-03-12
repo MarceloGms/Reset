@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   Dialog,
   DialogTitle,
@@ -10,8 +10,8 @@ import {
   Select,
   MenuItem,
 } from "@mui/material";
-import { Order } from "../routes/DashboardLogistica";
-import CustomSnackbar from './CustomSnackBar';
+import type { Order } from "../routes/DashboardLogistica";
+import CustomSnackbar from "./CustomSnackBar";
 
 interface UpdateOrderModalProps {
   open: boolean;
@@ -45,7 +45,7 @@ const UpdateOrderModal: React.FC<UpdateOrderModalProps> = ({
   if (!order) return null;
 
   const handleCloseSnackbar = () => {
-    setSnackbar(prev => ({ ...prev, open: false }));
+    setSnackbar((prev) => ({ ...prev, open: false }));
   };
 
   const handleUpdate = () => {
@@ -70,7 +70,9 @@ const UpdateOrderModal: React.FC<UpdateOrderModalProps> = ({
             >
               <MenuItem value="Em Picking">Em Picking</MenuItem>
               <MenuItem value="Stock Out">Stock Out</MenuItem>
-              <MenuItem value="Pronto para Recolha">Pronto para Recolha</MenuItem>
+              <MenuItem value="Pronto para Recolha">
+                Pronto para Recolha
+              </MenuItem>
             </Select>
           </FormControl>
           <FormControl fullWidth margin="normal">

@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -31,7 +25,6 @@ model Departamento {
   pickingPointId Int?         @unique
   pickingPoint   Localizacao? @relation(fields: [pickingPointId], references: [id])
   TipoReparo     TipoReparo[]
-  Bancada        Bancada[]
 }
 
 model Utilizador {
@@ -55,18 +48,14 @@ model TipoReparo {
 
 model Bancada {
   id                Int                 @id @default(autoincrement())
-  nome              String
-  departamentoId    Int
-  departamento      Departamento        @relation(fields: [departamentoId], references: [id])
+  nome              String              @unique
   BancadaUtilizador BancadaUtilizador[]
 }
 
 model BancadaUtilizador {
-  id         Int       @id @default(autoincrement())
-  usuarioId  Int
-  bancadaId  Int
-  dataInicio DateTime  @default(now())
-  dataFim    DateTime?
+  id        Int @id @default(autoincrement())
+  usuarioId Int
+  bancadaId Int
 
   usuario Utilizador @relation(fields: [usuarioId], references: [id])
   bancada Bancada    @relation(fields: [bancadaId], references: [id])
@@ -78,16 +67,24 @@ model Pedido {
   orderNumber        String
   tipoReparoId       Int
   localizacaoAtualId Int
-  tecnicoId          Int
   dataCriacao        DateTime @default(now())
   dataAtualizacao    DateTime @updatedAt
   finalizado         Boolean  @default(false)
+  utilizadorId       Int
 
   tipoReparo       TipoReparo        @relation(fields: [tipoReparoId], references: [id])
+  utilizador       Utilizador        @relation(fields: [utilizadorId], references: [id])
   localizacaoAtual Localizacao       @relation(fields: [localizacaoAtualId], references: [id])
-  tecnico          Utilizador        @relation(fields: [tecnicoId], references: [id])
   PedidoSparePart  PedidoSparePart[]
   Movimento        Movimento[]
+  Estado           Estado?           @relation(fields: [estadoId], references: [id])
+  estadoId         Int?
+}
+
+model Estado {
+  id     Int      @id @default(autoincrement())
+  nome   String
+  Pedido Pedido[]
 }
 
 model SparePart {

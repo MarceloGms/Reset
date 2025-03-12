@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   Button,
   Dialog,
@@ -11,8 +11,8 @@ import {
   InputLabel,
   Select,
 } from "@mui/material";
-import CustomSnackbar from './CustomSnackBar';
-import { Order } from "../routes/DashboardLogistica";
+import CustomSnackbar from "./CustomSnackBar";
+import type { Order } from "../routes/DashboardLogistica";
 
 // Props esperadas pelo componente
 interface AddOrderModalProps {
@@ -41,7 +41,7 @@ const AddOrderModal: React.FC<AddOrderModalProps> = ({
   });
 
   const handleCloseSnackbar = () => {
-    setSnackbar(prev => ({ ...prev, open: false }));
+    setSnackbar((prev) => ({ ...prev, open: false }));
   };
 
   const handleSubmit = () => {

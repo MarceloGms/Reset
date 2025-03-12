@@ -1,8 +1,47 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Button from "../components/button";
+import { useNavigate } from "react-router-dom";
 
 export default function WorkStation() {
   const [workStation, setWorkStation] = useState("");
+  const [benches, setBenches] = useState([]);
+
+  const [token, setToken] = useState<string>("");
+  const [userId, setUserId] = useState<string>("");
+
+  useEffect(() => {
+    setToken(localStorage.getItem("token") || "");
+    const userJson = localStorage.getItem("user");
+
+    if (userJson) {
+      try {
+        const user = JSON.parse(userJson);
+        if (user) {
+          setUserId(user.id);
+        } else {
+          console.error("User ID not found in the user object.");
+        }
+      } catch (error) {
+        console.error("Error parsing user JSON:", error);
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    fetch(`http://localhost:8800/api/benches/getUserBenches${userId}`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+        setBenches(data);
+      });
+  }, [token, userId]);
+
+  const navigate = useNavigate();
 
   const handleConfirm = () => {
     if (!workStation) {
@@ -11,6 +50,8 @@ export default function WorkStation() {
     }
 
     console.log(workStation);
+
+    navigate("/dashboard");
   };
 
   return (

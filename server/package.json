@@ -6,7 +6,8 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon --require dotenv/config src/app.js"
+    "dev": "nodemon --require dotenv/config src/app.js",
+    "start": "console-ninja node --env-file .env --watch src/app.js"
   },
   "keywords": [],
   "author": "",

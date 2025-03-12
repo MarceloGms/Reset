@@ -1,11 +1,19 @@
-import React, { useState, useMemo } from "react";
-import { TextField, MenuItem, Select, FormControl, InputLabel, Box, Button } from "@mui/material";
+import { useState, useMemo } from "react";
+import {
+  TextField,
+  MenuItem,
+  Select,
+  FormControl,
+  InputLabel,
+  Box,
+  Button,
+} from "@mui/material";
 import Navbar from "../components/navbar";
 import OrdersTable from "../components/OrdersTable";
 import UpdateOrderModal from "../components/updateOrderModal";
 import OrderHistoryModal from "../components/orderHistoryModal";
 import AddOrderModal from "../components/addOrderLogistica";
-import CustomSnackbar from '../components/CustomSnackBar';
+import CustomSnackbar from "../components/CustomSnackBar";
 
 // Define as interfaces para Order e HistoryRecord
 export interface Order {
@@ -31,15 +39,20 @@ export interface HistoryRecord {
 }
 
 // Estados possíveis
-const statuses = ["Em Picking", "Stock Out", "Pronto para Recolha", "Recolhido"];
+const statuses = [
+  "Em Picking",
+  "Stock Out",
+  "Pronto para Recolha",
+  "Recolhido",
+];
 
 // Mapeamento de localizações por tipo de reparação
 const locationMapping: { [key: string]: string } = {
-  "Major": "Zona de Recolha (Depto. Major)",
-  "Middle": "Zona de Recolha (Depto. Middle)",
-  "Minor": "Zona de Recolha (Depto. Minor)",
-  "Surgical": "Zona de Recolha (Depto. Surgical)",
-  "Electronics": "Zona de Recolha (Depto. Electronics)",
+  Major: "Zona de Recolha (Depto. Major)",
+  Middle: "Zona de Recolha (Depto. Middle)",
+  Minor: "Zona de Recolha (Depto. Minor)",
+  Surgical: "Zona de Recolha (Depto. Surgical)",
+  Electronics: "Zona de Recolha (Depto. Electronics)",
 };
 
 // Dados estáticos de exemplo
@@ -78,7 +91,8 @@ const DashboardLogistica: React.FC = () => {
   // Estado para o histórico dos pedidos
   const [orderHistory, setOrderHistory] = useState<HistoryRecord[]>([]);
   const [openHistoryDialog, setOpenHistoryDialog] = useState(false);
-  const [selectedHistoryOrder, setSelectedHistoryOrder] = useState<Order | null>(null);
+  const [selectedHistoryOrder, setSelectedHistoryOrder] =
+    useState<Order | null>(null);
 
   // Estado para controlar o AddOrderModal
   const [openAddOrderModal, setOpenAddOrderModal] = useState(false);
@@ -91,18 +105,19 @@ const DashboardLogistica: React.FC = () => {
   });
 
   const handleCloseSnackbar = () => {
-    setSnackbar(prev => ({ ...prev, open: false }));
+    setSnackbar((prev) => ({ ...prev, open: false }));
   };
 
   // Filtra os pedidos com base na pesquisa e no filtro de status
   const filteredData = useMemo(() => {
-    return orders.filter((order) =>
-      (searchTerm === "" ||
-        order.requestId.includes(searchTerm) ||
-        order.orderNumber.includes(searchTerm) ||
-        order.parts.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        order.location.toLowerCase().includes(searchTerm.toLowerCase())) &&
-      (filterStatus === "" || order.status === filterStatus)
+    return orders.filter(
+      (order) =>
+        (searchTerm === "" ||
+          order.requestId.includes(searchTerm) ||
+          order.orderNumber.includes(searchTerm) ||
+          order.parts.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          order.location.toLowerCase().includes(searchTerm.toLowerCase())) &&
+        (filterStatus === "" || order.status === filterStatus)
     );
   }, [searchTerm, filterStatus, orders]);
 
@@ -133,13 +148,28 @@ const DashboardLogistica: React.FC = () => {
     if (!selectedOrder) return;
 
     // Validação: para "Pronto para Recolha", a localização deve ser a correta
-    if (newStatus === "Pronto para Recolha" && newLocation !== locationMapping[selectedOrder.repairType]) {
-      alert(`Erro: A localização deve ser "${locationMapping[selectedOrder.repairType]}" para pedidos do tipo ${selectedOrder.repairType}.`);
+    if (
+      newStatus === "Pronto para Recolha" &&
+      newLocation !== locationMapping[selectedOrder.repairType]
+    ) {
+      alert(
+        `Erro: A localização deve ser "${
+          locationMapping[selectedOrder.repairType]
+        }" para pedidos do tipo ${selectedOrder.repairType}.`
+      );
       return;
     }
 
-    const updatedOrder: Order = { ...selectedOrder, status: newStatus, location: newLocation };
-    setOrders(prevOrders => prevOrders.map(order => order.id === updatedOrder.id ? updatedOrder : order));
+    const updatedOrder: Order = {
+      ...selectedOrder,
+      status: newStatus,
+      location: newLocation,
+    };
+    setOrders((prevOrders) =>
+      prevOrders.map((order) =>
+        order.id === updatedOrder.id ? updatedOrder : order
+      )
+    );
 
     // Registra a alteração no histórico
     const newRecord: HistoryRecord = {
@@ -152,7 +182,7 @@ const DashboardLogistica: React.FC = () => {
       newLocation: newLocation,
       updatedBy: "Operador Logística",
     };
-    setOrderHistory(prev => [...prev, newRecord]);
+    setOrderHistory((prev) => [...prev, newRecord]);
 
     setOpenDialog(false);
   };
@@ -165,7 +195,7 @@ const DashboardLogistica: React.FC = () => {
 
   // Função para adicionar um novo pedido (chamada pelo AddOrderModal)
   const addNewOrder = (order: Order) => {
-    setOrders(prevOrders => [...prevOrders, order]);
+    setOrders((prevOrders) => [...prevOrders, order]);
   };
 
   return (
@@ -177,7 +207,11 @@ const DashboardLogistica: React.FC = () => {
         </header>
 
         {/* Botão para abrir o AddOrderModal */}
-        <Button variant="contained" onClick={() => setOpenAddOrderModal(true)} sx={{ mb: 5, textTransform: "none" }}>
+        <Button
+          variant="contained"
+          onClick={() => setOpenAddOrderModal(true)}
+          sx={{ mb: 5, textTransform: "none" }}
+        >
           ➕ Adicionar Pedido
         </Button>
 
@@ -210,7 +244,11 @@ const DashboardLogistica: React.FC = () => {
 
         {/* Tabela de pedidos */}
         <Box sx={{ width: "100%" }}>
-          <OrdersTable orders={filteredData} onEdit={handleEdit} onViewHistory={handleViewHistory} />
+          <OrdersTable
+            orders={filteredData}
+            onEdit={handleEdit}
+            onViewHistory={handleViewHistory}
+          />
         </Box>
 
         {/* Modal de atualização */}
@@ -231,7 +269,9 @@ const DashboardLogistica: React.FC = () => {
           open={openHistoryDialog}
           onClose={() => setOpenHistoryDialog(false)}
           order={selectedHistoryOrder}
-          historyRecords={orderHistory.filter(record => record.orderId === selectedHistoryOrder?.id)}
+          historyRecords={orderHistory.filter(
+            (record) => record.orderId === selectedHistoryOrder?.id
+          )}
         />
 
         {/* Modal para adicionar novo pedido */}

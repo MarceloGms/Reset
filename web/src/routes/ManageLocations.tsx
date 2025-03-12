@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import { useState, useMemo } from "react";
 import {
   Box,
   Button,
@@ -7,12 +7,13 @@ import {
   InputLabel,
   Select,
   MenuItem,
-  Paper
+  Paper,
 } from "@mui/material";
-import { DataGrid, GridColDef, GridRenderCellParams } from "@mui/x-data-grid";
+import { DataGrid } from "@mui/x-data-grid";
+import type { GridColDef, GridRenderCellParams } from "@mui/x-data-grid";
 import Navbar from "../components/navbar"; // Ajuste o caminho de acordo com teu projeto
 import AddEditLocationModal from "../components/AddEditLocation";
-import CustomSnackbar from '../components/CustomSnackBar';
+import CustomSnackbar from "../components/CustomSnackBar";
 
 // Definição da interface para localizações
 export interface Location {
@@ -48,16 +49,17 @@ const ManageLocations: React.FC = () => {
   });
 
   const handleCloseSnackbar = () => {
-    setSnackbar(prev => ({ ...prev, open: false }));
+    setSnackbar((prev) => ({ ...prev, open: false }));
   };
 
   // Filtra os dados conforme o termo de pesquisa e o filtro de tipo
   const filteredData = useMemo(() => {
-    return locations.filter((loc) =>
-      (searchTerm === "" ||
-        loc.id.includes(searchTerm) ||
-        loc.name.toLowerCase().includes(searchTerm.toLowerCase())) &&
-      (filterType === "" || loc.type === filterType)
+    return locations.filter(
+      (loc) =>
+        (searchTerm === "" ||
+          loc.id.includes(searchTerm) ||
+          loc.name.toLowerCase().includes(searchTerm.toLowerCase())) &&
+        (filterType === "" || loc.type === filterType)
     );
   }, [searchTerm, filterType, locations]);
 
@@ -91,10 +93,9 @@ const ManageLocations: React.FC = () => {
       // Se existe uma localização em edição
       if (editingLocation) {
         return prev.map((loc) => (loc.id === location.id ? location : loc));
-      } else {
-        // Adição de nova localização
-        return [...prev, location];
       }
+      // Adição de nova localização
+      return [...prev, location];
     });
     setOpenModal(false);
   };
@@ -140,7 +141,11 @@ const ManageLocations: React.FC = () => {
         </header>
 
         {/* Botão para adicionar localização */}
-        <Button variant="contained" onClick={handleOpenAdd} sx={{ mb: 5, textTransform: "none" }}>
+        <Button
+          variant="contained"
+          onClick={handleOpenAdd}
+          sx={{ mb: 5, textTransform: "none" }}
+        >
           ➕ Adicionar Localização
         </Button>
 

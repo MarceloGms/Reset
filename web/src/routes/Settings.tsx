@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   Box,
   Typography,
@@ -11,7 +11,7 @@ import {
   Collapse,
 } from "@mui/material";
 import Navbar from "../components/navbar";
-import CustomSnackbar from '../components/CustomSnackBar';
+import CustomSnackbar from "../components/CustomSnackBar";
 
 const Settings: React.FC = () => {
   // Dados pessoais
@@ -38,13 +38,13 @@ const Settings: React.FC = () => {
   });
 
   const handleCloseSnackbar = () => {
-    setSnackbar(prev => ({ ...prev, open: false }));
+    setSnackbar((prev) => ({ ...prev, open: false }));
   };
 
   // Função para atualizar dados pessoais
   const handleNameAndRoleUpdate = () => {
     // Aqui você pode fazer a chamada à API para atualizar os dados pessoais
-   
+
     setSnackbar({
       open: true,
       message: "Dados atualizados com sucesso!",
@@ -55,7 +55,6 @@ const Settings: React.FC = () => {
   // Função para atualizar senha
   const handlePasswordUpdate = () => {
     if (newPassword !== confirmPassword) {
-     
       setSnackbar({
         open: true,
         message: "As senhas não conferem.",
@@ -64,7 +63,7 @@ const Settings: React.FC = () => {
       return;
     }
     // Aqui você faria a chamada à API para atualizar a senha
-   
+
     setSnackbar({
       open: true,
       message: "Senha atualizada com sucesso!",

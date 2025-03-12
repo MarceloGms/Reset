@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   Dialog,
   DialogTitle,
@@ -11,8 +11,8 @@ import {
   InputLabel,
   Button,
 } from "@mui/material";
-import { Location } from "../routes/ManageLocations"; // Ajuste o caminho conforme teu projeto
-import CustomSnackbar from './CustomSnackBar';
+import type { Location } from "../routes/ManageLocations"; // Ajuste o caminho conforme teu projeto
+import CustomSnackbar from "./CustomSnackBar";
 
 interface ModalProps {
   open: boolean;
@@ -39,7 +39,7 @@ const AddEditLocationModal: React.FC<ModalProps> = ({
   });
 
   const handleCloseSnackbar = () => {
-    setSnackbar(prev => ({ ...prev, open: false }));
+    setSnackbar((prev) => ({ ...prev, open: false }));
   };
 
   // Quando a prop "location" muda, atualizamos o estado local
@@ -69,7 +69,9 @@ const AddEditLocationModal: React.FC<ModalProps> = ({
     handleClose();
     setSnackbar({
       open: true,
-      message: location ? "Localização atualizada com sucesso!" : "Localização adicionada com sucesso!",
+      message: location
+        ? "Localização atualizada com sucesso!"
+        : "Localização adicionada com sucesso!",
       severity: "success",
     });
   };
@@ -77,7 +79,9 @@ const AddEditLocationModal: React.FC<ModalProps> = ({
   return (
     <>
       <Dialog open={open} onClose={handleClose} fullWidth>
-        <DialogTitle>{location ? "Editar Localização" : "Adicionar Localização"}</DialogTitle>
+        <DialogTitle>
+          {location ? "Editar Localização" : "Adicionar Localização"}
+        </DialogTitle>
         <DialogContent>
           <TextField
             margin="dense"

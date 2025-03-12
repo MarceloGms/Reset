@@ -1,4 +1,3 @@
-import React from "react";
 import {
   Dialog,
   DialogTitle,
@@ -11,7 +10,7 @@ import {
   TableCell,
   TableBody,
 } from "@mui/material";
-import { Order, HistoryRecord } from "../routes/DashboardLogistica";
+import type { Order, HistoryRecord } from "../routes/DashboardLogistica";
 
 interface OrderHistoryModalProps {
   open: boolean;
@@ -20,7 +19,12 @@ interface OrderHistoryModalProps {
   historyRecords: HistoryRecord[];
 }
 
-const OrderHistoryModal: React.FC<OrderHistoryModalProps> = ({ open, onClose, order, historyRecords }) => {
+const OrderHistoryModal: React.FC<OrderHistoryModalProps> = ({
+  open,
+  onClose,
+  order,
+  historyRecords,
+}) => {
   if (!order) return null;
 
   return (

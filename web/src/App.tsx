@@ -10,6 +10,7 @@ import DashboardLogistica from "./routes/DashboardLogistica";
 import Definições from "./routes/Settings";
 import ManageLocations from "./routes/ManageLocations";
 import { useContext } from "react";
+import type { JSX } from "react";
 import { AuthContext } from "./context/authContext";
 import NotFound from "./components/NotFound";
 
@@ -63,6 +64,10 @@ function App() {
           <ManageLocations />
         </RequireAuth>
       ),
+    },
+    {
+      path: "/",
+      element: <Navigate to="/auth" />,
     },
     {
       path: "*", // Rota "catch-all" para páginas não encontradas
